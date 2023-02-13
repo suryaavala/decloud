@@ -1,0 +1,4 @@
+[flake8]
+exclude = docs, tmp
+max-line-length = 125
+max-complexity = 10
