@@ -1,0 +1,34 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - ready_for_review
+      - synchronize
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: python:3.10.8
+    steps:
+      - uses: actions/checkout@v1
+      - name: Setup Environment
+        id: setup
+        run: make install-poetry install-py-dev-reqs
+      - name: Build & Install Pkg
+        id: pkg-install
+        run: |
+          make build-install-whl
+          python3 -c "import decloud; print(decloud.__name__)"
+      - name: Lint
+        id: lint
+        run: poetry run make lint-all
+      - name: Test
+        id: test
+        run: poetry run make test
